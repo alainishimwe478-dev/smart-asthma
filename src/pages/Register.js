@@ -10,6 +10,8 @@ function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -20,17 +22,11 @@ function Register() {
     }
 
     setError("");
-
-    try {
-      const response = await signup(name, email, password);
-
-      // Assuming response includes token and role
-      localStorage.setItem("token", response.token || "demo-token");
-      localStorage.setItem("role", response.role || "user");
-      navigate("/login");
-    } catch (err) {
-      setError(err.message || "Registration failed");
-    }
+    console.log("Register with:", name, email, password);
+    // Simulate successful registration: persist token & role and navigate
+    localStorage.setItem("token", "demo-token");
+    localStorage.setItem("role", "user");
+    navigate("/user");
   };
 
   return (
@@ -47,6 +43,13 @@ function Register() {
           <p className="text-red-500 text-center mb-4 font-medium animate-pulse">
             {error}
           </p>
+        )}
+
+        {successMessage && (
+          <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded mb-4">
+            <p className="font-medium">{successMessage}</p>
+            <p className="text-sm">Redirecting to login…</p>
+          </div>
         )}
 
         <div className="mb-4">
@@ -90,9 +93,19 @@ function Register() {
 
         <button
           type="submit"
-          className="w-full bg-blue-700 text-white py-3 rounded-lg hover:bg-blue-800 transition font-semibold shadow-lg"
+          disabled={loading}
+          className={`w-full bg-blue-700 text-white py-3 rounded-lg transition font-semibold shadow-lg ${
+            loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-800"
+          }`}
         >
-          Register
+          {loading ? (
+            <span className="flex items-center justify-center gap-2">
+              <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              Registering...
+            </span>
+          ) : (
+            "Register"
+          )}
         </button>
 
         <p className="mt-6 text-center text-gray-600">
@@ -102,6 +115,8 @@ function Register() {
           </a>
         </p>
       </form>
+
+      
     </div>
   );
 }

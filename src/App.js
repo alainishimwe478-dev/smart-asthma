@@ -3,7 +3,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import AdminDashboard from "./pages/AdminDashboard";
 import DoctorDashboard from "./pages/DoctorDashboard";
-import UserDashboard from "./pages/UserDashboard";
+import UserDashboard from "./pages/DashboardHome";
 
 const ProtectedRoute = ({ children, role }) => {
   const token = localStorage.getItem("token");

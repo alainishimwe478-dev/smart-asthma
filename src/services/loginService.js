@@ -1,24 +1,31 @@
+/**
+ * Login user using external backend
+ * Expected response:
+ * {
+ *   token: "...",
+ *   user: { id, full_name, email, role }
+ * }
+ */
 export const loginService = async (email, password) => {
-  const response = await fetch("https://backend1-5xtu.onrender.com/users/login", {
+  const res = await fetch("https://backend1-5xtu.onrender.com/users/login", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
+    headers: { "Content-Type": "application/json", accept: "application/json" },
     body: JSON.stringify({ email, password }),
   });
 
-  if (!response.ok) {
-    
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Login failed");
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const err = body.detail || body.message || "Login failed";
+    throw new Error(err);
   }
 
-  const data = await response.json();
+  const token = body.token;
+  const user = body.user || {};
+  const role = user.role || "user";
 
-  // Store token and role for protected routes
-  if (data.token) localStorage.setItem("token", data.token);
-  if (data.role) localStorage.setItem("role", data.role);
+  localStorage.setItem("token", token);
+  localStorage.setItem("role", role);
+  localStorage.setItem("user", JSON.stringify(user));
 
-  return data.role;
+  return role;
 };
